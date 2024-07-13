@@ -1,0 +1,28 @@
+{
+  "name": "majorsystem-backend",
+  "version": "1.0.0",
+  "description": "A Node.js backend server for querying vocabulary based on the Major System",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma": "npx prisma migrate dev",
+    "populate": "ts-node populate-db.ts"
+  },
+  "keywords": ["major system", "mnemonics", "vocabulary", "backend"],
+  "author": "David Fischer",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.16.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.10",
+    "csv-parser": "^3.0.0",
+    "express": "^4.19.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.16.2"
+  }
+}

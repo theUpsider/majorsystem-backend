@@ -1,0 +1,11 @@
+venv/
+.vscode/
+# generated files
+major_system_data.csv
+node_modules/
+# ingore all js files
+*.js
+# ignore prisma related files
+/prisma/dev.db
+/prisma/.env
+/prisma/migrations/
