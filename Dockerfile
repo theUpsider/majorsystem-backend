@@ -2,6 +2,9 @@
 # Use a specific version of Node.js, here it's 18.
 FROM node:18
 
+# Install Python for dataset preparation
+RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
+
 # Create and change to the app directory.
 WORKDIR /usr/src/app
 
@@ -17,8 +20,19 @@ COPY prisma ./prisma
 # Generate Prisma client
 RUN npx prisma generate
 
+# Copy dataset preparation files
+COPY prepare_dataset.py ./
+COPY substitution_dict.json ./
+COPY datasets ./datasets
+
+# Prepare the dataset
+RUN python3 prepare_dataset.py datasets/wordlist-german.txt major_system_data.csv substitution_dict.json
+
 # Copy the rest of the application code.
 COPY . .
+
+# Run database migration and populate the database
+RUN npx prisma migrate deploy && npm run populate
 
 # Expose the port the app runs on.
 EXPOSE 5000
