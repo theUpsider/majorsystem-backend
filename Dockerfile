@@ -37,8 +37,8 @@ RUN python3 prepare_dataset.py datasets/wordlist-german.txt major_system_data.cs
 # Copy the rest of the application code.
 COPY . .
 
-# Run database migration and populate the database
-RUN npx prisma migrate deploy && npm run populate
+# Create database schema and populate the database
+RUN npx prisma db push && npm run populate
 
 # Expose the port the app runs on.
 EXPOSE 5000
