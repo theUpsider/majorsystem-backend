@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  majorsystem-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: majorsystem-backend-dev
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:/usr/src/app/prisma/dev.db
+    volumes:
+      - ./src:/usr/src/app/src
+      - majorsystem_data_dev:/usr/src/app/prisma
+
+volumes:
+  majorsystem_data_dev:
+    name: majorsystem_data_dev
