@@ -10,9 +10,12 @@ COPY package*.json ./
 
 # Install dependencies.
 RUN npm install
+
+# Copy Prisma schema first
+COPY prisma ./prisma
+
+# Generate Prisma client
 RUN npx prisma generate
-RUN npx prisma init --datasource-provider sqlite
-RUN npx prisma migrate dev --name init
 
 # Copy the rest of the application code.
 COPY . .
