@@ -17,6 +17,12 @@ RUN npm install
 # Copy Prisma schema first
 COPY prisma ./prisma
 
+# Copy .env file for environment variables
+COPY .env ./
+
+# Set DATABASE_URL for build-time operations
+ENV DATABASE_URL="file:./dev.db"
+
 # Generate Prisma client
 RUN npx prisma generate
 
