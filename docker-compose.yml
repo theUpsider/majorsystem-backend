@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   majorsystem-backend:
     image: ghcr.io/theupsider/majorsystem-backend:latest
@@ -11,6 +9,14 @@ services:
       - DATABASE_URL=file:/usr/src/app/prisma/dev.db
     volumes:
       - ./data:/usr/src/app/prisma
+    command: >
+      sh -c "
+        if [ ! -f /usr/src/app/prisma/dev.db ]; then
+          echo 'Database not found, creating and populating...';
+          npx prisma db push && npm run populate;
+        fi &&
+        npm run dev
+      "
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
