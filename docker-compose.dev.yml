@@ -13,8 +13,4 @@ services:
       - DATABASE_URL=file:/usr/src/app/prisma/dev.db
     volumes:
       - ./src:/usr/src/app/src
-      - majorsystem_data_dev:/usr/src/app/prisma
-
-volumes:
-  majorsystem_data_dev:
-    name: majorsystem_data_dev
+      - ./prisma:/usr/src/app/prisma

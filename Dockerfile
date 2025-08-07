@@ -39,9 +39,9 @@ COPY . .
 
 # Ensure proper permissions and create database
 RUN mkdir -p /usr/src/app/prisma && \
-    chown -R node:node /usr/src/app/prisma && \
     npx prisma db push && \
-    npm run populate
+    npm run populate && \
+    chown -R node:node /usr/src/app
 
 # Set the correct runtime DATABASE_URL
 ENV DATABASE_URL="file:./prisma/dev.db"

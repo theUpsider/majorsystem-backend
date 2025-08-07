@@ -8,7 +8,7 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:./prisma/dev.db
+      - DATABASE_URL=file:/usr/src/app/prisma/dev.db
     volumes:
       - ./data:/usr/src/app/prisma
     restart: unless-stopped
