@@ -20,8 +20,8 @@ COPY prisma ./prisma
 # Copy .env file for environment variables
 COPY .env ./
 
-# Set DATABASE_URL for build-time operations
-ENV DATABASE_URL="file:./dev.db"
+# Set DATABASE_URL for build-time operations (correct path)
+ENV DATABASE_URL="file:./prisma/dev.db"
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -37,8 +37,17 @@ RUN python3 prepare_dataset.py datasets/wordlist-german.txt major_system_data.cs
 # Copy the rest of the application code.
 COPY . .
 
-# Create database schema and populate the database
-RUN npx prisma db push && npm run populate
+# Ensure proper permissions and create database
+RUN mkdir -p /usr/src/app/prisma && \
+    chown -R node:node /usr/src/app/prisma && \
+    npx prisma db push && \
+    npm run populate
+
+# Set the correct runtime DATABASE_URL
+ENV DATABASE_URL="file:./prisma/dev.db"
+
+# Change to node user for security
+USER node
 
 # Expose the port the app runs on.
 EXPOSE 5000

@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  majorsystem-backend:
+    image: ghcr.io/theupsider/majorsystem-backend:latest
+    container_name: majorsystem-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./prisma/dev.db
+      - PORT=5000
+    volumes:
+      # Persist database data
+      - majorsystem_data:/usr/src/app/prisma
+      # Optional: persist logs
+      - majorsystem_logs:/usr/src/app/logs
+    networks:
+      - majorsystem_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      # Traefik labels (uncomment if using Traefik)
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.majorsystem.rule=Host(`majorsystem.yourdomain.com`)"
+      # - "traefik.http.routers.majorsystem.entrypoints=websecure"
+      # - "traefik.http.routers.majorsystem.tls.certresolver=le"
+      # - "traefik.http.services.majorsystem.loadbalancer.server.port=5000"
+      
+      # General labels for management
+      - "com.docker.compose.project=majorsystem"
+      - "app=majorsystem-backend"
+      - "version=latest"
+
+  # Optional: Add a reverse proxy with SSL
+  nginx:
+    image: nginx:alpine
+    container_name: majorsystem-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment for SSL certificates
+      # - ./certs:/etc/nginx/certs:ro
+    networks:
+      - majorsystem_network
+    depends_on:
+      - majorsystem-backend
+    labels:
+      - "com.docker.compose.project=majorsystem"
+      - "app=majorsystem-nginx"
+
+volumes:
+  majorsystem_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/majorsystem/data
+  majorsystem_logs:
+    driver: local
+
+networks:
+  majorsystem_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
